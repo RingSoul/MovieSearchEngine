@@ -9,6 +9,7 @@ public class MovieCollection
     private ArrayList<Movie> movies;
     private Scanner scanner;
     private ArrayList<String> casts;
+    private ArrayList<String> genres;
 
     public MovieCollection(String fileName)
     {
@@ -44,8 +45,31 @@ public class MovieCollection
             }
         }
 
-
-
+        // simpler way of splitting String
+        for (int i = 0; i < movies.size(); i++)
+        {
+            Movie movie = movies.get(i);
+            String[] g = movie.getGenres().split("//|");
+            for (String x : g)
+            {
+                genres.add(x);
+            }
+        }
+        // remove duplicates from genres list
+        for (int i = 0; i < genres.size(); i++)
+        {
+            String currentGenre = genres.get(i);
+            for (int x = i + 1; x < genres.size(); x++)
+            {
+                String comparison = genres.get(x);
+                if (comparison.equals(currentGenre))
+                {
+                    genres.remove(x);
+                    x--;
+                }
+            }
+        }
+        sortResultsString(genres); // sort in advance
     }
 
     public ArrayList<Movie> getMovies()
@@ -317,7 +341,16 @@ public class MovieCollection
 
     private void listGenres()
     {
-
+        // display
+        for (int i = 0; i < genres.size(); i++)
+        {
+            int num = i + 1;
+            System.out.println(num + ". " + genres.get(i));
+        }
+        System.out.print("Which genre interests you? \nEnter the number: ");
+        int answer = scanner.nextInt();
+        answer--;
+        String
     }
 
     private void listHighestRated()

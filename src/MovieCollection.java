@@ -236,7 +236,8 @@ public class MovieCollection
         System.out.print("Which actor would you like to learn more about? \nEnter number: ");
         int num = scanner.nextInt();
         num -= 1;
-        String selected = casts.get(num);
+        String selected = relevant.get(num);
+        System.out.println(selected + " had participated in the following movies...");
         // get movie lists
         ArrayList<Movie> in = new ArrayList<Movie>();
         for (int i = 0; i < movies.size(); i++)

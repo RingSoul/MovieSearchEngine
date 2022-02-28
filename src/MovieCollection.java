@@ -46,11 +46,12 @@ public class MovieCollection
         }
         sortResultsString(casts); // sort in advance
 
+        genres = new ArrayList<String>();
         // simpler way of splitting String
         for (int i = 0; i < movies.size(); i++)
         {
             Movie movie = movies.get(i);
-            String[] g = movie.getGenres().split("//|");
+            String[] g = movie.getGenres().split("\\|");
             for (String x : g)
             {
                 genres.add(x);
@@ -350,7 +351,27 @@ public class MovieCollection
         System.out.print("Which genre interests you? \nEnter the number: ");
         int answer = scanner.nextInt();
         answer--;
-        String
+        String selected = genres.get(answer);
+        ArrayList<Movie> relevant = new ArrayList<Movie>();
+        for (int i = 0; i < movies.size(); i++)
+        {
+            Movie current = movies.get(i);
+            if (current.getGenres().indexOf(selected) != -1)
+            {
+                relevant.add(current);
+            }
+        }
+        sortResultsMovie(relevant);
+        for (int i = 0; i < relevant.size(); i++)
+        {
+            System.out.println(i+1 + ". " + relevant.get(i).getTitle());
+        }
+        System.out.print("Which movie are you interested? \nEnter a number: ");
+        int choice = scanner.nextInt();
+        choice--;
+        displayMovieInfo(relevant.get(choice));
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
     }
 
     private void listHighestRated()

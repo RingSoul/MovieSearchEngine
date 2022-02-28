@@ -44,6 +44,7 @@ public class MovieCollection
                 }
             }
         }
+        sortResultsString(casts); // sort in advance
 
         // simpler way of splitting String
         for (int i = 0; i < movies.size(); i++)
@@ -250,7 +251,6 @@ public class MovieCollection
                 relevant.add(current);
             }
         }
-        sortResultsString(relevant);
         // show actor list
         for (int i = 0; i < relevant.size(); i++)
         {

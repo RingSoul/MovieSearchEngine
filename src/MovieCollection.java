@@ -10,6 +10,8 @@ public class MovieCollection
     private Scanner scanner;
     private ArrayList<String> casts;
     private ArrayList<String> genres;
+    private ArrayList<Movie> top50Rate;
+    private ArrayList<Movie> top50Revenue;
 
     public MovieCollection(String fileName)
     {
@@ -46,6 +48,7 @@ public class MovieCollection
         }
         sortResultsString(casts); // sort in advance
 
+        // for genres
         genres = new ArrayList<String>();
         // simpler way of splitting String
         for (int i = 0; i < movies.size(); i++)
@@ -72,11 +75,104 @@ public class MovieCollection
             }
         }
         sortResultsString(genres); // sort in advance
+
+        // for top 50 movies
+        top50Rate = new ArrayList<Movie>();
+        Movie highestRated = movies.get(0);
+        Movie lowestRated = movies.get(0);
+        top50Rate.add(highestRated);
+        for (int i = 1; i < movies.size(); i++)
+        {
+            Movie current = movies.get(i);
+            if (top50Rate.size() < 50)
+            {
+                top50Rate.add(current);
+            }
+            else // list full after first 50 iterations, need to delete
+            {
+                // always sorted already, so delete last index when necessary
+                if (current.getUserRating() > lowestRated.getUserRating())
+                {
+                    top50Rate.add(0, current); // added in front to prevent being deleted
+                    top50Rate.remove(top50Rate.size() - 1);
+                }
+            }
+            sortRatingHighToLow(top50Rate);
+            lowestRated = top50Rate.get(top50Rate.size() - 1); // update (sorted, so last = smallest)
+            highestRated = top50Rate.get(0); // update (sorted, so first = biggest)
+        }
+
+        // for top 50 revenue
+        top50Revenue = new ArrayList<Movie>();
+        // same process, different variable names and different sort method
+        Movie highestRevenueMovie = movies.get(0);
+        Movie lowestRevenueMovie = movies.get(0);
+        top50Revenue.add(highestRevenueMovie);
+        for (int i = 1; i < movies.size(); i++)
+        {
+            Movie current = movies.get(i);
+            if (top50Revenue.size() < 50)
+            {
+                top50Revenue.add(current);
+            }
+            else // list full after first 50 iterations, need to delete
+            {
+                // always sorted already, so delete last index when necessary
+                if (current.getRevenue() > lowestRevenueMovie.getRevenue())
+                {
+                    top50Revenue.add(0, current); // added in front to prevent being deleted
+                    top50Revenue.remove(top50Revenue.size() - 1);
+                }
+            }
+            sortRevenueHighToLow(top50Revenue);
+            lowestRevenueMovie = top50Revenue.get(top50Revenue.size() - 1); // update (sorted, so last = smallest)
+            highestRevenueMovie = top50Revenue.get(0); // update (sorted, so first = biggest)
+        }
     }
 
     public ArrayList<Movie> getMovies()
     {
         return movies;
+    }
+
+    public void sortRatingHighToLow(ArrayList<Movie> movies)
+    {
+        /* attempt of reversed selection sort */
+        for (int i = 0; i < movies.size(); i++)
+        {
+            int maxIndex = i;
+            for (int j = i + 1; j < movies.size(); j++)
+            {
+                if (movies.get(maxIndex).getUserRating() < movies.get(j).getUserRating())
+                {
+                    maxIndex = j;
+                }
+            }
+            // swap minIndex and i
+            Movie temp = movies.get(i);
+            movies.set(i, movies.get(maxIndex));
+            movies.set(maxIndex, temp);
+        }
+    }
+
+    public void sortRevenueHighToLow(ArrayList<Movie> movies)
+    {
+        /* attempt of reversed selection sort */
+        for (int i = 0; i < movies.size(); i++)
+        {
+            int maxIndex = i;
+            for (int j = i + 1; j < movies.size(); j++)
+            {
+                if (movies.get(maxIndex).getRevenue() < movies.get(j).getRevenue())
+                {
+                    maxIndex = j;
+                }
+            }
+            // swap minIndex and i
+            Movie temp = movies.get(i);
+            movies.set(i, movies.get(maxIndex));
+            movies.set(maxIndex, temp);
+        }
     }
 
     public void menu()
@@ -362,6 +458,7 @@ public class MovieCollection
             }
         }
         sortResultsMovie(relevant);
+        System.out.println(selected + " genre has the following movies...");
         for (int i = 0; i < relevant.size(); i++)
         {
             System.out.println(i+1 + ". " + relevant.get(i).getTitle());
@@ -376,12 +473,41 @@ public class MovieCollection
 
     private void listHighestRated()
     {
-
+        System.out.println("Top 50 Rated Movies:");
+        // display
+        int num = 1;
+        for (int i = 0; i < top50Rate.size(); i++)
+        {
+            System.out.println(num + ". " + top50Rate.get(i).getTitle() + " ----- " + top50Rate.get(i).getUserRating());
+            num++;
+        }
+        System.out.print("Which movie are you interested in? \nEnter a number: ");
+        int answer = scanner.nextInt();
+        answer--;
+        Movie selected = top50Rate.get(answer);
+        displayMovieInfo(selected);
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
     }
 
     private void listHighestRevenue()
     {
-
+        // similar to top50Rate, just different list and different accessor method
+        System.out.println("Top 50 Highest Revenue Movies:");
+        // display
+        int num = 1;
+        for (int i = 0; i < top50Revenue.size(); i++)
+        {
+            System.out.println(num + ". " + top50Revenue.get(i).getTitle() + " ----- " + top50Revenue.get(i).getRevenue());
+            num++;
+        }
+        System.out.print("Which movie are you interested in? \nEnter a number: ");
+        int answer = scanner.nextInt();
+        answer--;
+        Movie selected = top50Revenue.get(answer);
+        displayMovieInfo(selected);
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
     }
 
     private void importMovieList(String fileName)
